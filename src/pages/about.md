@@ -1,37 +1,48 @@
 ---
 layout: ../layouts/AboutLayout.astro
-title: "About"
+title: "关于我"
 ---
 
-AstroPaper is a minimal, accessible and SEO-friendly blog theme built with [Astro](https://astro.build/) and [Tailwind CSS](https://tailwindcss.com/).
+欢迎你来了解我！不过，短短几句怎么够了解一个人呢？
 
-![Astro Paper](public/astropaper-og.jpg)
+## 关于我
 
-AstroPaper provides a solid foundation for blogs, or even portfolios\_ with full markdown support, built-in dark mode, and a clean layout that works out-of-the-box.
+我叫**张骞**，一个热衷于做点有意思的事情的普通大学生，如果你也想做点有趣的事情，不妨和我聊聊？
 
-The blog posts in this theme also serve as guides, docs or example articles\_ making AstroPaper a flexible starting point for your next content-driven site.
+## 教育经历
 
-## Features
+| 时间 | 学校 | 专业/方向 |
+|------|------|----------|
+| 2023年 - 2027年 | 哈尔滨工业大学（威海） | 计算机科学与技术 |
 
-AstroPaper comes with a set of useful features that make content publishing easy and effective:
+## 发表经历
 
-- SEO-friendly
-- Fast performance
-- Light & dark mode
-- Highly customizable
-- Organizable blog posts
-- Responsive & accessible
-- Static search with [PageFind](https://pagefind.app/)
-- Automatic social image generation
+以下是我在学术或技术领域的一些发表成果：
 
-and so much more.
+### 学术论文
 
-## Show your support
+1. **ScEdit: Script-based Assessment of Knowledge Editing** 
+- Published: 15 May 2025 
+- Accepted by ACL 2025 Findings 
+- Authors: Xinye Li, Zunwen Zheng, Qian Zhang
 
-If you like [AstroPaper](https://github.com/satnaing/astro-paper), consider giving it a star ⭐️.
+### 技术文章
 
-Found a bug 🐛 or have an improvement ✨ in mind? Feel free to open an [issue](https://github.com/satnaing/astro-paper/issues), submit a [pull request](https://github.com/satnaing/astro-paper/pulls) or start a [discussion](https://github.com/satnaing/astro-paper/discussions).
+- 暂无公开文章
 
-If you find this theme helpful, you can also [sponsor me on GitHub](https://github.com/sponsors/satnaing) or [buy me a coffee](https://buymeacoffee.com/satnaing) to show your support — every penny counts.
+## 工作经历
 
-Kyay zuu! 🙏🏼
+| 时间 | 团队 | 职位 |
+|------|----------|------|
+| 2023 - 2024 | 哈工大威海联合创新平台 | 硬件技术负责人 |
+| 2024年 - 至今 | 哈工大ICES研究中心 | 科研实习生 |
+| 2024年 - 至今 | 上海交通大学MVIG实验室 | 科研实习生 |
+
+## 联系方式
+
+- 📧 Email: zhangqian.work@outlook.com
+- 💻 GitHub: [github.com/Sakabamrisa](https://github.com/Sakabamrisa)
+
+---
+
+感谢你访问我的博客！如果你有任何问题或想法，欢迎通过以上方式联系我。
