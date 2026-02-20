@@ -3,7 +3,7 @@ export const SITE = {
   author: "张骞",
   profile: "https://your-domain.com/",
   desc: "个人成长记录 - 记录学习、思考与成长",
-  title: "我的个人博客",
+  title: "我的个人主页",
   ogImage: "astropaper-og.jpg",
   lightAndDarkMode: true,
   postPerIndex: 4,

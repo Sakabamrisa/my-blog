@@ -1,5 +1,4 @@
 ---
-import { ClientRouter } from "astro:transitions";
 import { PUBLIC_GOOGLE_SITE_VERIFICATION } from "astro:env/client";
 import { SITE } from "@/config";
 import "@/styles/global.css";
@@ -128,12 +127,27 @@ const structuredData = {
       )
     }
 
-    <ClientRouter />
+    <!-- Game of Life Background Canvas -->
+    <style is:inline>
+      #gol-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: -1;
+        pointer-events: none;
+        opacity: 0.04;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #gol-canvas { display: none; }
+      }
+    </style>
 
     <!-- Minimal inline script to prevent FOUC - sets theme immediately -->
     <script is:inline>
       (function () {
-        const initialColorScheme = ""; // "light" | "dark"
+        const initialColorScheme = "";
         const currentTheme = localStorage.getItem("theme");
 
         function getPreferTheme() {
@@ -145,11 +159,7 @@ const structuredData = {
         }
 
         const themeValue = getPreferTheme();
-
-        // Set theme immediately to prevent flash
         document.firstElementChild?.setAttribute("data-theme", themeValue);
-
-        // Export minimal API for external script
         window.theme = {
           themeValue: themeValue,
           getTheme: () => window.theme.themeValue,
@@ -161,7 +171,101 @@ const structuredData = {
     </script>
   </head>
   <body>
+    <canvas id="gol-canvas"></canvas>
     <slot />
+
+    <!-- Game of Life Background Script -->
+    <script is:inline>
+      (function() {
+        var canvas = document.getElementById('gol-canvas');
+        if (!canvas) return;
+        
+        var ctx = canvas.getContext('2d');
+        var resolution = 16;
+        var cols = 0;
+        var rows = 0;
+        var grid = [];
+        var animationId = null;
+        
+        function buildGrid() {
+          var g = [];
+          for (var c = 0; c < cols; c++) {
+            g[c] = [];
+            for (var r = 0; r < rows; r++) {
+              g[c][r] = Math.floor(Math.random() * 2);
+            }
+          }
+          return g;
+        }
+        
+        function resize() {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+          cols = Math.floor(canvas.width / resolution);
+          rows = Math.floor(canvas.height / resolution);
+          grid = buildGrid();
+        }
+        
+        function countNeighbors(g, col, row) {
+          var count = 0;
+          for (var i = -1; i <= 1; i++) {
+            for (var j = -1; j <= 1; j++) {
+              if (i === 0 && j === 0) continue;
+              var x = col + i;
+              var y = row + j;
+              if (x >= 0 && x < cols && y >= 0 && y < rows) {
+                count += g[x][y];
+              }
+            }
+          }
+          return count;
+        }
+        
+        function nextGen() {
+          var newGrid = [];
+          for (var c = 0; c < cols; c++) {
+            newGrid[c] = [];
+            for (var r = 0; r < rows; r++) {
+              var cell = grid[c][r];
+              var neighbors = countNeighbors(grid, c, r);
+              if (cell === 1 && (neighbors < 2 || neighbors > 3)) {
+                newGrid[c][r] = 0;
+              } else if (cell === 0 && neighbors === 3) {
+                newGrid[c][r] = 1;
+              } else {
+                newGrid[c][r] = cell;
+              }
+            }
+          }
+          grid = newGrid;
+        }
+        
+        function render() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          ctx.fillStyle = isDark ? '#d4af37' : '#006cac';
+          for (var c = 0; c < cols; c++) {
+            for (var r = 0; r < rows; r++) {
+              if (grid[c][r]) {
+                ctx.fillRect(c * resolution, r * resolution, resolution - 2, resolution - 2);
+              }
+            }
+          }
+        }
+        
+        function update() {
+          nextGen();
+          render();
+          setTimeout(function() {
+            animationId = requestAnimationFrame(update);
+          }, 150);
+        }
+        
+        window.addEventListener('resize', resize);
+        resize();
+        update();
+      })();
+    </script>
 
     <!-- Load full theme logic -->
     <script src="../scripts/theme.ts"></script>

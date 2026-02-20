@@ -1,28 +1,18 @@
 ---
-import { getCollection } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
-import Card from "@/components/Card.astro";
-import getSortedPosts from "@/utils/getSortedPosts";
-import IconArrowRight from "@/assets/icons/IconArrowRight.svg";
-import LinkButton from "@/components/LinkButton.astro";
-import { SITE } from "@/config";
-
-const posts = await getCollection("blog");
-const sortedPosts = getSortedPosts(posts);
-const recentPosts = sortedPosts.filter(({ data }) => !data.featured).slice(0, 3);
 ---
 
-<Layout>
+<Layout title="关于我">
   <Header />
-  <main id="main-content" class="app-layout py-12">
+  <main class="app-layout py-12">
     
     <section class="mb-16">
-      <h1 class="text-4xl font-bold mb-2">张骞</h1>
-      <p class="text-lg opacity-70 mb-6">计算机科学与技术 · 哈尔滨工业大学（威海）</p>
+      <h1 class="text-4xl font-bold mb-2">关于我</h1>
+      <p class="text-lg opacity-70 mb-6">欢迎你来了解我！</p>
       <p class="text-base leading-relaxed max-w-2xl">
-        一个热衷于做点有意思的事情的普通大学生，如果你也想做点有趣的事情，不妨和我聊聊？
+        我叫<strong class="font-medium">张骞</strong>，一个热衷于做点有意思的事情的普通大学生，如果你也想做点有趣的事情，不妨和我聊聊？
       </p>
     </section>
 
@@ -49,19 +39,26 @@ const recentPosts = sortedPosts.filter(({ data }) => !data.featured).slice(0, 3)
       </h2>
       <div class="pl-4 border-l-2 border-muted space-y-6">
         <div>
-          <div class="flex flex-wrap items-baseline gap-2 mb-2">
-            <span class="font-medium">ScEdit: Script-based Assessment of Knowledge Editing</span>
+          <h3 class="font-medium mb-2">学术论文</h3>
+          <div class="mb-4">
+            <div class="flex flex-wrap items-baseline gap-2 mb-2">
+              <span class="font-medium">ScEdit: Script-based Assessment of Knowledge Editing</span>
+            </div>
+            <ul class="space-y-1 text-sm opacity-70">
+              <li class="flex items-start gap-2">
+                <span class="mt-1.5 w-1 h-1 bg-accent rounded-full flex-shrink-0"></span>
+                <span>Accepted by ACL 2025 Findings</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="mt-1.5 w-1 h-1 bg-accent rounded-full flex-shrink-0"></span>
+                <span>Authors: Xinye Li, Zunwen Zheng, Qian Zhang</span>
+              </li>
+            </ul>
           </div>
-          <ul class="space-y-1 text-sm opacity-70">
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 w-1 h-1 bg-accent rounded-full flex-shrink-0"></span>
-              <span>Accepted by ACL 2025 Findings</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 w-1 h-1 bg-accent rounded-full flex-shrink-0"></span>
-              <span>Authors: Xinye Li, Zunwen Zheng, Qian Zhang</span>
-            </li>
-          </ul>
+        </div>
+        <div>
+          <h3 class="font-medium mb-2">技术文章</h3>
+          <p class="opacity-60 text-sm">暂无公开文章</p>
         </div>
       </div>
     </section>
@@ -154,34 +151,6 @@ const recentPosts = sortedPosts.filter(({ data }) => !data.featured).slice(0, 3)
       </div>
     </section>
 
-    {
-      recentPosts.length > 0 && (
-        <section class="mt-16 pt-8 border-t border-border">
-          <h2 class="text-xl font-semibold mb-6 flex items-center gap-2">
-            <span class="w-1 h-6 bg-accent rounded-full"></span>
-            最新动态
-          </h2>
-          <ul class="space-y-4">
-            {recentPosts.map(data => <Card variant="h3" {...data} />)}
-          </ul>
-          <div class="mt-6">
-            <LinkButton href="/posts/" class="text-sm opacity-70 hover:opacity-100">
-              查看全部文章
-              <IconArrowRight class="inline-block rtl:-rotate-180" />
-            </LinkButton>
-          </div>
-        </section>
-      )
-    }
   </main>
   <Footer />
 </Layout>
-
-<script>
-  document.addEventListener("astro:page-load", () => {
-    const indexLayout = (document.querySelector("#main-content") as HTMLElement)?.dataset?.layout;
-    if (indexLayout) {
-      sessionStorage.setItem("backUrl", "/");
-    }
-  });
-</script>
