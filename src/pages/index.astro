@@ -14,6 +14,12 @@ const recentPosts = sortedPosts.filter(({ data }) => !data.featured).slice(0, 3)
 ---
 
 <Layout title="主页 | 张骞">
+  <!-- 彩蛋画布层 (默认完全透明且鼠标穿透) -->
+  <canvas 
+    id="konami-canvas" 
+    class="fixed inset-0 pointer-events-none z-[9999] opacity-0 transition-opacity duration-1000"
+  ></canvas>
+
   <Header />
   
   <style>
@@ -218,7 +224,7 @@ const recentPosts = sortedPosts.filter(({ data }) => !data.featured).slice(0, 3)
                 </div>
               </div>
 
-              <!-- 模块 4：荣誉奖项 (重组归类) -->
+              <!-- 模块 4：荣誉奖项 -->
               <div class="magic-item delay-5">
                 <button class="accordion-trigger w-full py-3 flex items-center justify-between text-left group/sub focus:outline-none" data-target="award-content">
                   <h2 class="text-lg font-semibold flex items-center gap-4 transition-transform duration-300 group-hover/sub:translate-x-2 group-hover/sub:text-accent">
@@ -229,7 +235,6 @@ const recentPosts = sortedPosts.filter(({ data }) => !data.featured).slice(0, 3)
                 <div id="award-content" class="grid-accordion">
                   <div class="grid-accordion-inner">
                     <div class="pl-12 py-4 space-y-8">
-                      
                       <!-- 国家级 -->
                       <div>
                         <h3 class="text-xs font-bold text-accent mb-4 tracking-widest opacity-70 uppercase">国家级</h3>
@@ -320,7 +325,6 @@ const recentPosts = sortedPosts.filter(({ data }) => !data.featured).slice(0, 3)
                           </div>
                         </div>
                       </div>
-
                     </div>
                   </div>
                 </div>
@@ -418,6 +422,7 @@ const recentPosts = sortedPosts.filter(({ data }) => !data.featured).slice(0, 3)
 </Layout>
 
 <script>
+  // ========== 原始交互代码 ==========
   function initAccordions() {
     const triggers = document.querySelectorAll('.accordion-trigger');
     
@@ -460,6 +465,120 @@ const recentPosts = sortedPosts.filter(({ data }) => !data.featured).slice(0, 3)
     const indexLayout = (document.querySelector("#main-content") as HTMLElement)?.dataset?.layout;
     if (indexLayout) {
       sessionStorage.setItem("backUrl", "/");
+    }
+  });
+
+
+  // ========== 隐藏彩蛋系统 (Konami Code) ==========
+  // 触发序列：上、上、下、下、左、左、右、右、B、A、B、A
+  const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowLeft', 'ArrowRight', 'ArrowRight', 'b', 'a', 'b', 'a'];
+  let konamiIndex = 0;
+
+  function initEasterEggListener() {
+    document.addEventListener('keydown', (e) => {
+      // 获取按键并统一转为小写对比，兼容大小写
+      const key = e.key.toLowerCase();
+      const targetKey = konamiCode[konamiIndex].toLowerCase();
+      
+      if (key === targetKey) {
+        konamiIndex++;
+        if (konamiIndex === konamiCode.length) {
+          triggerPixelWave();
+          konamiIndex = 0; // 重置进度
+        }
+      } else {
+        konamiIndex = 0;
+        // 如果按错的键刚好是第一个键，则重置为第一步
+        if (key === konamiCode[0].toLowerCase()) {
+          konamiIndex = 1;
+        }
+      }
+    });
+  }
+
+  // 渲染像素波浪特效
+  function triggerPixelWave() {
+    const canvas = document.getElementById('konami-canvas') as HTMLCanvasElement;
+    if (!canvas || canvas.dataset.playing === 'true') return;
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    console.log("%c🎉 彩蛋触发：七彩像素波浪阵！", "color: #ff00ff; font-size: 20px; font-weight: bold;");
+
+    canvas.dataset.playing = 'true';
+    canvas.style.opacity = '1';
+    
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+    
+    let time = 0;
+    let animationId: number;
+    const size = 32; // 像素块基础大小
+
+    function resizeCanvas() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    function draw() {
+      // 每次绘制前清空画布
+      ctx!.clearRect(0, 0, width, height);
+      
+      const cols = Math.ceil(width / size);
+      const rows = Math.ceil(height / size);
+      
+      for (let x = 0; x < cols; x++) {
+        for (let y = 0; y < rows; y++) {
+          // 利用多重正弦波产生流体像素波浪感
+          const v1 = Math.sin(x * 0.15 + time * 0.04);
+          const v2 = Math.sin(y * 0.15 + time * 0.04);
+          const v3 = Math.sin((x + y) * 0.1 + time * 0.06);
+          const v = v1 + v2 + v3; // 波动值，范围约 -3 到 3
+          
+          // 计算动态七彩色相
+          const hue = (v * 50 + time * 2) % 360;
+          
+          // 计算像素块的大小缩放（产生呼吸跳跃感）
+          const pulse = (Math.sin(v + time * 0.1) + 1) / 2; // 0 到 1
+          const currentSize = size * (0.3 + pulse * 0.7); // 大小在 30% - 100% 之间波动
+          const offset = (size - currentSize) / 2; // 居中偏移量
+          
+          // 半透明填充，不遮挡底层文字
+          ctx!.fillStyle = `hsla(${hue}, 100%, 65%, 0.5)`;
+          ctx!.fillRect(x * size + offset, y * size + offset, currentSize, currentSize);
+        }
+      }
+      
+      time++;
+      animationId = requestAnimationFrame(draw);
+    }
+    
+    draw();
+    
+    // 8秒后自动淡出并停止渲染，避免占用性能
+    setTimeout(() => {
+      canvas.style.opacity = '0';
+      setTimeout(() => {
+        cancelAnimationFrame(animationId);
+        canvas.dataset.playing = 'false';
+        ctx.clearRect(0, 0, width, height);
+        window.removeEventListener('resize', resizeCanvas);
+      }, 1000); // 配合 CSS 里的 duration-1000 渐隐时间
+    }, 8000);
+  }
+
+  // Astro 页面生命周期挂载
+  document.addEventListener('astro:page-load', () => {
+    // 避免重复绑定监听
+    if (!(window as any)._konamiBinded) {
+      initEasterEggListener();
+      (window as any)._konamiBinded = true;
     }
   });
 </script>

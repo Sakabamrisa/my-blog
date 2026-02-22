@@ -125,18 +125,25 @@ const isActive = (path: string) => {
             <span class="sr-only">搜索</span>
           </LinkButton>
         </li>
+        
+        {/* === 修改后的亮暗色滑动切换按钮 === */}
         {
           SITE.lightAndDarkMode && (
             <li class="col-span-1 flex items-center justify-center">
               <button
                 id="theme-btn"
-                class="focus-outline relative size-12 p-4 sm:size-8 hover:[&>svg]:stroke-accent"
-                title="Toggles light & dark"
+                class="group focus-outline relative flex h-7 w-14 cursor-pointer items-center rounded-full border border-border bg-background transition-colors duration-300 hover:border-accent"
+                title="切换亮/暗色主题"
                 aria-label="auto"
                 aria-live="polite"
               >
-                <IconMoon class="absolute top-[50%] left-[50%] -translate-[50%] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-                <IconSunHigh class="absolute top-[50%] left-[50%] -translate-[50%] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+                <!-- 滑块 (Knob) -->
+                <div
+                  class="absolute left-[3px] flex size-5 transform items-center justify-center rounded-full bg-border text-background shadow-sm transition-all duration-300 ease-out group-hover:bg-accent dark:translate-x-7 [&>svg]:stroke-background"
+                >
+                  <IconSunHigh class="absolute size-3.5 scale-100 transition-transform duration-300 dark:scale-0 dark:-rotate-90" />
+                  <IconMoon class="absolute size-3.5 scale-0 rotate-90 transition-transform duration-300 dark:scale-100 dark:rotate-0" />
+                </div>
               </button>
             </li>
           )
