@@ -1,6 +1,5 @@
 ---
 import "@pagefind/default-ui/css/ui.css";
-import Main from "@/layouts/Main.astro";
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
@@ -11,60 +10,140 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : "/";
 
 <Layout title={`搜索 | ${SITE.title}`}>
   <Header />
-  <Main pageTitle="搜索" pageDesc="搜索任意文章...">
-    <div id="pagefind-search" transition:persist data-backurl={backUrl}></div>
-  </Main>
+  
+  <style>
+    /* ========== 页面级进入动画 ========== */
+    .fade-in-up {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+    @keyframes fadeInUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ========== 科技感时间轴动画 ========== */
+    .draw-line {
+      transform-origin: top;
+      transform: scaleY(0);
+      animation: drawLine 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+      animation-delay: 0.1s;
+    }
+    @keyframes drawLine {
+      to { transform: scaleY(1); }
+    }
+
+    .timeline-item {
+      opacity: 0;
+      transform: translateX(-15px);
+      animation: slideInRight 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+    @keyframes slideInRight {
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ========== 悬浮交互反馈 ========== */
+    .glow-bar {
+      transition: all 0.3s ease;
+    }
+    .group-hover-title:hover .glow-bar {
+      box-shadow: 0 0 15px rgba(var(--color-accent-rgb), 0.6);
+      width: 0.375rem;
+    }
+    
+    .hover-glow:hover .timeline-dot {
+      box-shadow: 0 0 15px rgba(var(--color-accent-rgb), 0.8);
+      background-color: rgba(var(--color-accent-rgb), 1);
+      transform: scale(1.3);
+    }
+    .hover-glow:hover .guide-line {
+      border-color: rgba(var(--color-accent-rgb), 0.4);
+    }
+  </style>
+  
+  <main id="main-content" class="app-layout py-12 min-h-[70vh] max-w-3xl mx-auto px-4 sm:px-8">
+    
+    <!-- 顶部标题区域 -->
+    <section class="mb-12 fade-in-up group group-hover-title cursor-default">
+      <div class="flex items-center gap-4 mb-3">
+        <div class="glow-bar w-1 h-10 bg-accent rounded-full transition-transform duration-300"></div>
+        <h1 class="text-4xl font-bold tracking-wide transition-transform duration-300 group-hover-title:translate-x-2">搜索</h1>
+      </div>
+      <div class="pl-6 ml-1 border-l-2 border-accent/20">
+        <p class="text-lg opacity-70 font-medium tracking-wide">
+          在终端记录中检索你感兴趣的文章与足迹。
+        </p>
+      </div>
+    </section>
+    
+    <!-- 搜索模块区域 (挂载于时间轴) -->
+    <section class="relative">
+      
+      <!-- 主轴线 -->
+      <div class="absolute left-[3px] sm:left-[11px] top-2 bottom-[-40px] w-[2px] bg-gradient-to-b from-accent via-accent/30 to-transparent draw-line z-0"></div>
+      
+      <!-- 搜索框节点 -->
+      <div class="relative pl-8 sm:pl-10 pt-2 group hover-glow timeline-item" style="animation-delay: 0.3s;">
+        
+        <!-- 发光圆点 -->
+        <div class="absolute left-[-2px] sm:left-1 top-[22px] w-3 h-3 rounded-full border-2 border-accent bg-skin-base z-10 timeline-dot transition-all duration-300">
+          <div class="absolute inset-0 bg-accent/40 rounded-full animate-ping" style="animation-duration: 2s;"></div>
+        </div>
+        
+        <!-- 引导连接线 (水平段) -->
+        <div class="absolute left-1 sm:left-4 top-[27px] w-4 sm:w-6 h-[1px] border-t border-dashed border-border guide-line transition-colors duration-300 z-0"></div>
+
+        <!-- 搜索核心容器 -->
+        <div class="transition-transform duration-300 group-hover:translate-x-1 pl-1">
+          <div id="pagefind-search" data-backurl={backUrl}></div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
   <Footer />
 </Layout>
 
 <script>
   function initSearch() {
-    const pageFindSearch: HTMLElement | null =
-      document.querySelector("#pagefind-search");
-
+    const pageFindSearch: HTMLElement | null = document.querySelector("#pagefind-search");
     if (!pageFindSearch) return;
 
     const params = new URLSearchParams(window.location.search);
-
     const onIdle = window.requestIdleCallback || (cb => setTimeout(cb, 1));
 
     onIdle(async () => {
-      // @ts-expect-error — Missing types for @pagefind/default-ui package.
+      // @ts-expect-error
       const { PagefindUI } = await import("@pagefind/default-ui");
 
-      // Display warning inn dev mode
       if (import.meta.env.DEV) {
         pageFindSearch.innerHTML = `
-            <div class="bg-muted/75 rounded p-4 space-y-4 mb-4">
-              <p><strong>开发模式提示：</strong>在开发模式下查看搜索结果，需要先构建一次项目。</p>
-              <code class="block bg-black text-white px-2 py-1 rounded">npm run build</code>
-            </div>
-          `;
+          <div class="bg-skin-card border border-border rounded-lg p-4 space-y-4 mb-4 text-sm font-mono opacity-80">
+            <p><strong class="text-accent">开发模式提示：</strong>在此模式下预览搜索，需要先构建项目索引。</p>
+            <code class="block bg-skin-fill px-3 py-2 rounded">npm run build</code>
+          </div>
+        `;
       }
 
-      // Init pagefind ui
       const search = new PagefindUI({
         element: "#pagefind-search",
         showImages: false,
         showSubResults: true,
         processTerm: function (term: string) {
-          params.set("q", term); // Update the `q` parameter in the URL
-          history.replaceState(history.state, "", "?" + params.toString()); // Push the new URL without reloading
-
+          params.set("q", term);
+          history.replaceState(history.state, "", "?" + params.toString());
           const backUrl = pageFindSearch?.dataset?.backurl;
           sessionStorage.setItem("backUrl", backUrl + "?" + params.toString());
-
           return term;
         },
       });
 
-      // If search param exists (eg: search?q=astro), trigger search
       const query = params.get("q");
       if (query) {
         search.triggerSearch(query);
       }
 
-      // Reset search param if search input is cleared
       const searchInput = document.querySelector(".pagefind-ui__search-input");
       const clearButton = document.querySelector(".pagefind-ui__search-clear");
       searchInput?.addEventListener("input", resetSearchParam);
@@ -80,62 +159,74 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : "/";
 
   document.addEventListener("astro:after-swap", () => {
     const pagefindSearch = document.querySelector("#pagefind-search");
-
-    // if pagefind search form already exists, don't initialize search component
     if (pagefindSearch && pagefindSearch.querySelector("form")) return;
-
     initSearch();
   });
+  
+  // 触发页面动画重置
+  document.addEventListener("astro:page-load", () => {
+    const animItems = document.querySelectorAll('.timeline-item, .fade-in-up, .draw-line');
+    animItems.forEach(item => {
+      const el = item as HTMLElement;
+      el.style.animation = 'none';
+      el.offsetHeight; 
+      el.style.animation = '';
+    });
+    
+    // 初始化搜索
+    if (document.querySelector("#pagefind-search") && !document.querySelector("#pagefind-search form")) {
+      initSearch();
+    }
+  });
+
+  // 初始加载
   initSearch();
 </script>
 
 <style is:global>
+  /* 适配 Pagefind 到无边框暗金主题 */
   #pagefind-search {
     --pagefind-ui-font: var(--font-app);
     --pagefind-ui-text: var(--foreground);
-    --pagefind-ui-background: var(--background);
+    --pagefind-ui-background: transparent;
     --pagefind-ui-border: var(--border);
     --pagefind-ui-primary: var(--accent);
     --pagefind-ui-tag: var(--background);
-    --pagefind-ui-border-radius: 0.375rem;
+    --pagefind-ui-border-radius: 0.5rem;
     --pagefind-ui-border-width: 1px;
-    --pagefind-ui-image-border-radius: 8px;
-    --pagefind-ui-image-box-ratio: 3 / 2;
+  }
 
-    form::before {
-      background-color: var(--foreground);
-    }
+  /* 搜索框美化 */
+  .pagefind-ui__search-input {
+    font-weight: 400;
+    background-color: rgba(var(--color-fill-rgb), 0.5) !important;
+    border: 1px solid rgba(var(--color-border-rgb), 0.5) !important;
+    transition: all 0.3s ease;
+  }
+  .pagefind-ui__search-input:focus-visible {
+    outline: none !important;
+    border-color: rgba(var(--color-accent-rgb), 0.8) !important;
+    box-shadow: 0 0 15px rgba(var(--color-accent-rgb), 0.15);
+  }
+  .pagefind-ui__search-clear {
+    background-color: transparent !important;
+  }
 
-    input {
-      font-weight: 400;
-      border: 1px solid var(--border);
-    }
-
-    input:focus-visible {
-      outline: 1px solid var(--accent);
-    }
-
-    .pagefind-ui__result-title a {
-      color: var(--accent);
-      outline-offset: 1px;
-      outline-color: var(--accent);
-      text-decoration-style: dashed;
-      text-underline-offset: 4px;
-    }
-
-    .pagefind-ui__result-title a:focus-visible,
-    .pagefind-ui__search-clear:focus-visible {
-      text-decoration-line: none;
-      outline-width: 2px;
-      outline-style: dashed;
-    }
-
-    .pagefind-ui__result:last-of-type {
-      border-bottom: 0;
-    }
-
-    .pagefind-ui__result-nested .pagefind-ui__result-link:before {
-      font-family: system-ui;
-    }
+  /* 搜索结果美化 */
+  .pagefind-ui__result {
+    border-color: rgba(var(--color-border-rgb), 0.3) !important;
+    padding: 1.5rem 0 !important;
+  }
+  .pagefind-ui__result-title a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+  .pagefind-ui__result-title a:hover {
+    opacity: 0.8;
+  }
+  .pagefind-ui__result-excerpt {
+    opacity: 0.7;
+    margin-top: 0.5rem;
   }
 </style>

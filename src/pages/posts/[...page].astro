@@ -1,7 +1,6 @@
 ---
 import type { GetStaticPaths } from "astro";
 import { getCollection } from "astro:content";
-import Main from "@/layouts/Main.astro";
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
@@ -18,15 +17,119 @@ export const getStaticPaths = (async ({ paginate }) => {
 const { page } = Astro.props;
 ---
 
-<Layout title={`文章 | ${SITE.title}`}>
+<Layout title={`想法 | ${SITE.title}`}>
   <Header />
-  <Main pageTitle="文章" pageDesc="">
-    <ul>
-      {page.data.map(data => <Card {...data} />)}
-    </ul>
-  </Main>
+  
+  <style>
+    /* ========== 页面级进入动画 ========== */
+    .fade-in-up {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+    @keyframes fadeInUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-  <Pagination {page} />
+    /* ========== 科技感时间轴动画 ========== */
+    /* 1. 主轴线向下生长 */
+    .draw-line {
+      transform-origin: top;
+      transform: scaleY(0);
+      animation: drawLine 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+      animation-delay: 0.1s;
+    }
+    @keyframes drawLine {
+      to { transform: scaleY(1); }
+    }
 
+    /* 2. 文章卡片依次从左侧滑入渐现 */
+    .timeline-item {
+      opacity: 0;
+      transform: translateX(-20px);
+      animation: slideInRight 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+    @keyframes slideInRight {
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ========== 悬浮交互反馈 ========== */
+    /* 鼠标悬浮在文章区域时，左侧对应的时间圆点发光并放大 */
+    .hover-glow:hover .timeline-dot {
+      box-shadow: 0 0 15px rgba(var(--color-accent-rgb), 0.8);
+      background-color: rgba(var(--color-accent-rgb), 1);
+      transform: scale(1.3);
+    }
+    /* 鼠标悬浮时，左侧引导线变色 */
+    .hover-glow:hover .guide-line {
+      border-color: rgba(var(--color-accent-rgb), 0.4);
+    }
+  </style>
+
+  <!-- 页面主体容器，限制最大宽度以保持阅读舒适度 -->
+  <main id="main-content" class="app-layout py-12 min-h-[70vh] max-w-3xl mx-auto px-4 sm:px-8">
+    
+    <!-- 顶部标题区域 -->
+    <section class="mb-12 fade-in-up">
+      <div class="flex items-center gap-4 mb-3">
+        <div class="w-2 h-10 bg-accent rounded-full shadow-[0_0_15px_rgba(var(--color-accent-rgb),0.5)]"></div>
+        <h1 class="text-4xl font-bold tracking-wide">想法</h1>
+      </div>
+      <div class="pl-6 ml-1 border-l-2 border-accent/20">
+        <p class="text-lg opacity-70 font-medium tracking-wide">
+          记录折腾、思考与一些有意思的事情。
+        </p>
+      </div>
+    </section>
+
+    <!-- 想法列表 (瀑布流时间轴) -->
+    <section class="relative">
+      
+      <!-- 贯穿全列表的主线 (动态生长) -->
+      <div class="absolute left-[3px] sm:left-[11px] top-2 bottom-0 w-[2px] bg-gradient-to-b from-accent via-accent/30 to-transparent draw-line z-0"></div>
+
+      <div class="space-y-10">
+        {page.data.map((data, index) => (
+          <!-- 每篇文章作为一个时间节点 -->
+          <div class="relative pl-8 sm:pl-10 group hover-glow timeline-item" style={`animation-delay: ${0.2 + index * 0.15}s`}>
+            
+            <!-- 科技感发光圆点 -->
+            <div class="absolute left-[-2px] sm:left-1 top-3 w-3 h-3 rounded-full border-2 border-accent bg-skin-base z-10 timeline-dot transition-all duration-300">
+              <div class="absolute inset-0 bg-accent/40 rounded-full animate-ping" style="animation-duration: 2s;"></div>
+            </div>
+            
+            <!-- 引导连接线 (水平段) -->
+            <div class="absolute left-1 sm:left-4 top-[17px] w-4 sm:w-6 h-[1px] border-t border-dashed border-border guide-line transition-colors duration-300 z-0"></div>
+
+            <!-- 文章卡片内容容器 (带悬浮右移动画) -->
+            <div class="transition-transform duration-300 group-hover:translate-x-2 pl-2">
+              <Card {...data} />
+            </div>
+
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- 分页组件 -->
+    <div class="mt-16 fade-in-up" style="animation-delay: 0.8s;">
+      <Pagination {page} />
+    </div>
+
+  </main>
+  
   <Footer noMarginTop={page.lastPage > 1} />
 </Layout>
+
+<script>
+  // 适配 Astro View Transitions，确保在页面切换时动画重新播放
+  document.addEventListener("astro:page-load", () => {
+    const animItems = document.querySelectorAll('.timeline-item, .fade-in-up, .draw-line');
+    animItems.forEach(item => {
+      const el = item as HTMLElement;
+      el.style.animation = 'none';
+      el.offsetHeight; // 触发浏览器强制重绘
+      el.style.animation = '';
+    });
+  });
+</script>

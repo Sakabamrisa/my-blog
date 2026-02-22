@@ -7,170 +7,410 @@ import Card from "@/components/Card.astro";
 import getSortedPosts from "@/utils/getSortedPosts";
 import IconArrowRight from "@/assets/icons/IconArrowRight.svg";
 import LinkButton from "@/components/LinkButton.astro";
-import { SITE } from "@/config";
 
 const posts = await getCollection("blog");
 const sortedPosts = getSortedPosts(posts);
 const recentPosts = sortedPosts.filter(({ data }) => !data.featured).slice(0, 3);
 ---
 
-<Layout>
+<Layout title="主页 | 张骞">
   <Header />
-  <main id="main-content" class="app-layout py-12">
+  
+  <style>
+    /* ========== 核心布局过渡 ========== */
+    .grid-accordion {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .grid-accordion.is-open {
+      grid-template-rows: 1fr;
+    }
+    .grid-accordion-inner {
+      overflow: hidden;
+    }
+
+    /* ========== 科技感节点连线动画系统 ========== */
+    .magic-circle {
+      opacity: 0;
+      transform: translateY(20px) scale(0.5);
+      transition: opacity 0.3s ease, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .grid-accordion.is-open .magic-circle {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      transition-delay: 0.1s;
+    }
+
+    .magic-line {
+      transform-origin: left center;
+      transform: scaleX(0);
+      opacity: 0;
+      transition: transform 0.6s cubic-bezier(0.85, 0, 0.15, 1), opacity 0.2s ease;
+    }
+    .grid-accordion.is-open .magic-line {
+      transform: scaleX(1);
+      opacity: 1;
+      transition-delay: 0.4s;
+    }
+
+    .magic-item {
+      opacity: 0;
+      transform: translateX(-15px);
+      transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .grid-accordion.is-open .magic-item {
+      opacity: 1;
+      transform: translateX(0);
+    }
     
-    <section class="mb-16">
-      <h1 class="text-4xl font-bold mb-2">张骞</h1>
-      <p class="text-lg opacity-70 mb-6">计算机科学与技术 · 哈尔滨工业大学（威海）</p>
-      <p class="text-base leading-relaxed max-w-2xl">
-        一个热衷于做点有意思的事情的普通大学生，如果你也想做点有趣的事情，不妨和我聊聊？
-      </p>
-    </section>
+    .grid-accordion.is-open .delay-1 { transition-delay: 0.6s; }
+    .grid-accordion.is-open .delay-2 { transition-delay: 0.7s; }
+    .grid-accordion.is-open .delay-3 { transition-delay: 0.8s; }
+    .grid-accordion.is-open .delay-4 { transition-delay: 0.9s; }
+    .grid-accordion.is-open .delay-5 { transition-delay: 1.0s; }
+    .grid-accordion.is-open .delay-6 { transition-delay: 1.1s; }
 
-    <section class="mb-12">
-      <h2 class="text-xl font-semibold mb-6 flex items-center gap-2">
-        <span class="w-1 h-6 bg-accent rounded-full"></span>
-        教育经历
-      </h2>
-      <div class="pl-4 border-l-2 border-muted">
-        <div class="mb-4">
-          <div class="flex flex-wrap items-baseline gap-2 mb-1">
-            <span class="font-medium">哈尔滨工业大学（威海）</span>
-            <span class="text-sm opacity-60">2023 - 2027</span>
+    /* ========== 交互状态 ========== */
+    .arrow-icon {
+      transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), color 0.3s;
+    }
+    /* 发光游标 */
+    .glow-bar {
+      transition: all 0.3s ease;
+    }
+    .group-hover-trigger:hover .glow-bar {
+      box-shadow: 0 0 15px rgba(var(--color-accent-rgb), 0.6);
+      width: 0.375rem; /* w-1.5 */
+    }
+  </style>
+
+  <main id="main-content" class="app-layout py-12 min-h-[70vh]">
+    
+    <!-- ================= 顶级区块 1：张骞 ================= -->
+    <div class="max-w-3xl mx-auto mb-16 relative">
+      
+      <!-- 无边框触发器 -->
+      <button 
+        class="accordion-trigger w-full py-4 flex items-center justify-between text-left focus:outline-none group group-hover-trigger"
+        data-target="level-1-content"
+      >
+        <div class="flex items-center gap-5">
+          <div class="glow-bar w-1 h-10 bg-accent rounded-full"></div>
+          <h1 class="text-4xl font-bold tracking-wide transition-transform duration-300 group-hover:translate-x-2">张骞</h1>
+        </div>
+        <svg class="arrow-icon w-8 h-8 text-skin-base opacity-40 group-hover:text-accent group-hover:opacity-100" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </button>
+
+      <!-- 内容区 -->
+      <div id="level-1-content" class="grid-accordion">
+        <div class="grid-accordion-inner">
+          
+          <!-- 科幻节点与连线 UI -->
+          <div class="pl-2 pt-2 pb-6 flex items-center">
+            <div class="magic-circle relative flex items-center justify-center">
+              <div class="w-3 h-3 rounded-full border-2 border-accent bg-skin-base z-10"></div>
+              <div class="absolute w-6 h-6 bg-accent/20 rounded-full animate-ping"></div>
+            </div>
+            <div class="magic-line flex-1 h-[1px] ml-4 bg-gradient-to-r from-accent/50 to-transparent"></div>
           </div>
-          <p class="opacity-70">计算机科学与技术</p>
+
+          <div class="pl-8 pb-8 space-y-6">
+            
+            <!-- 个人简介 -->
+            <div class="mb-10 pl-5 border-l-2 border-accent/30 magic-item delay-1">
+              <p class="text-lg opacity-80 mb-2 text-accent font-medium tracking-wide">计算机科学与技术 · 哈尔滨工业大学（威海）</p>
+              <p class="text-base leading-relaxed opacity-70">
+                一个热衷于做点有意思的事情的普通大学生，如果你也想做点有趣的事情，不妨和我聊聊？
+              </p>
+            </div>
+
+            <div class="space-y-2">
+              
+              <!-- 模块 1：教育经历 -->
+              <div class="magic-item delay-2">
+                <button class="accordion-trigger w-full py-3 flex items-center justify-between text-left group/sub focus:outline-none" data-target="edu-content">
+                  <h2 class="text-lg font-semibold flex items-center gap-4 transition-transform duration-300 group-hover/sub:translate-x-2 group-hover/sub:text-accent">
+                    <span class="text-accent text-xl opacity-80 group-hover/sub:scale-110 transition-transform">🎓</span> 教育经历
+                  </h2>
+                  <svg class="arrow-icon w-5 h-5 opacity-30 group-hover/sub:opacity-100" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+                <div id="edu-content" class="grid-accordion">
+                  <div class="grid-accordion-inner">
+                    <div class="pl-12 py-3">
+                      <div class="pl-4 border-l-2 border-border relative before:absolute before:w-1.5 before:h-1.5 before:bg-accent before:rounded-full before:-left-[4px] before:top-2.5">
+                        <div class="flex flex-wrap items-baseline gap-3 mb-1">
+                          <span class="font-medium text-[1.05rem]">哈尔滨工业大学（威海）</span>
+                          <span class="text-xs font-mono opacity-50 px-2 py-0.5 rounded border border-border/50">2023 - 2027</span>
+                        </div>
+                        <p class="opacity-60 text-sm mt-1 tracking-wide">计算机科学与技术</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 模块 2：发表经历 -->
+              <div class="magic-item delay-3">
+                <button class="accordion-trigger w-full py-3 flex items-center justify-between text-left group/sub focus:outline-none" data-target="pub-content">
+                  <h2 class="text-lg font-semibold flex items-center gap-4 transition-transform duration-300 group-hover/sub:translate-x-2 group-hover/sub:text-accent">
+                    <span class="text-accent text-xl opacity-80 group-hover/sub:scale-110 transition-transform">📄</span> 发表经历
+                  </h2>
+                  <svg class="arrow-icon w-5 h-5 opacity-30 group-hover/sub:opacity-100" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+                <div id="pub-content" class="grid-accordion">
+                  <div class="grid-accordion-inner">
+                    <div class="pl-12 py-3">
+                      <div class="pl-4 border-l-2 border-border relative before:absolute before:w-1.5 before:h-1.5 before:bg-accent before:rounded-full before:-left-[4px] before:top-2.5">
+                        <div class="font-medium text-[1.05rem] mb-2 leading-tight">ScEdit: Script-based Assessment of Knowledge Editing</div>
+                        <div class="space-y-1.5 text-sm opacity-70">
+                          <p class="flex items-center gap-2">
+                            <span class="w-1 h-1 bg-accent rounded-full opacity-50"></span>
+                            <span><strong class="font-medium opacity-100">Accepted by:</strong> ACL 2025 Findings</span>
+                          </p>
+                          <p class="flex items-start gap-2">
+                            <span class="w-1 h-1 bg-accent rounded-full mt-2 opacity-50"></span>
+                            <span><strong class="font-medium opacity-100">Authors:</strong> Xinye Li, Zunwen Zheng, Qian Zhang</span>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 模块 3：研究经历 -->
+              <div class="magic-item delay-4">
+                <button class="accordion-trigger w-full py-3 flex items-center justify-between text-left group/sub focus:outline-none" data-target="work-content">
+                  <h2 class="text-lg font-semibold flex items-center gap-4 transition-transform duration-300 group-hover/sub:translate-x-2 group-hover/sub:text-accent">
+                    <span class="text-accent text-xl opacity-80 group-hover/sub:scale-110 transition-transform">🔬</span> 研究经历
+                  </h2>
+                  <svg class="arrow-icon w-5 h-5 opacity-30 group-hover/sub:opacity-100" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+                <div id="work-content" class="grid-accordion">
+                  <div class="grid-accordion-inner">
+                    <div class="pl-12 py-3 space-y-6">
+                      <div class="pl-4 border-l-2 border-border relative before:absolute before:w-1.5 before:h-1.5 before:bg-accent before:rounded-full before:-left-[4px] before:top-2.5">
+                        <div class="flex flex-wrap justify-between items-baseline gap-2 mb-1">
+                          <span class="font-medium text-[1.05rem]">上海交通大学 MVIG 实验室</span>
+                          <span class="text-xs font-mono opacity-50">2024 - PRESENT</span>
+                        </div>
+                        <p class="text-accent text-sm opacity-80">科研实习生</p>
+                      </div>
+                      <div class="pl-4 border-l-2 border-border relative before:absolute before:w-1.5 before:h-1.5 before:bg-accent before:rounded-full before:-left-[4px] before:top-2.5">
+                        <div class="flex flex-wrap justify-between items-baseline gap-2 mb-1">
+                          <span class="font-medium text-[1.05rem]">哈工大 ICES 研究中心</span>
+                          <span class="text-xs font-mono opacity-50">2024 - PRESENT</span>
+                        </div>
+                        <p class="text-accent text-sm opacity-80">科研实习生</p>
+                      </div>
+                      <div class="pl-4 border-l-2 border-border relative before:absolute before:w-1.5 before:h-1.5 before:bg-accent before:rounded-full before:-left-[4px] before:top-2.5">
+                        <div class="flex flex-wrap justify-between items-baseline gap-2 mb-1">
+                          <span class="font-medium text-[1.05rem]">哈工大威海联合创新平台</span>
+                          <span class="text-xs font-mono opacity-50">2023 - 2024</span>
+                        </div>
+                        <p class="text-accent text-sm opacity-80">硬件技术负责人</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 模块 4：荣誉奖项 (重组归类) -->
+              <div class="magic-item delay-5">
+                <button class="accordion-trigger w-full py-3 flex items-center justify-between text-left group/sub focus:outline-none" data-target="award-content">
+                  <h2 class="text-lg font-semibold flex items-center gap-4 transition-transform duration-300 group-hover/sub:translate-x-2 group-hover/sub:text-accent">
+                    <span class="text-accent text-xl opacity-80 group-hover/sub:scale-110 transition-transform">🏆</span> 荣誉奖项
+                  </h2>
+                  <svg class="arrow-icon w-5 h-5 opacity-30 group-hover/sub:opacity-100" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+                <div id="award-content" class="grid-accordion">
+                  <div class="grid-accordion-inner">
+                    <div class="pl-12 py-4 space-y-8">
+                      
+                      <!-- 国家级 -->
+                      <div>
+                        <h3 class="text-xs font-bold text-accent mb-4 tracking-widest opacity-70 uppercase">国家级</h3>
+                        <div class="space-y-5">
+                          <div class="pl-4 border-l-2 border-border relative before:absolute before:w-1.5 before:h-1.5 before:bg-accent before:rounded-full before:-left-[4px] before:top-2.5">
+                            <div class="flex flex-wrap justify-between items-baseline gap-2 mb-1">
+                              <span class="font-medium">挑战杯专项赛"揭榜挂帅"擂台赛</span>
+                              <span class="text-xs opacity-50 font-mono">2025.10</span>
+                            </div>
+                            <p class="opacity-60 text-sm">国家级二等奖 · 队长 · 人工智能领域</p>
+                          </div>
+                          <div class="pl-4 border-l-2 border-border relative before:absolute before:w-1.5 before:h-1.5 before:bg-accent before:rounded-full before:-left-[4px] before:top-2.5">
+                            <div class="flex flex-wrap justify-between items-baseline gap-2 mb-1">
+                              <span class="font-medium">第十四届全国海洋航行器设计与制作大赛</span>
+                              <span class="text-xs opacity-50 font-mono">2025.08</span>
+                            </div>
+                            <p class="opacity-60 text-sm">国家级二等奖 · 硬件技术暨拓扑架构负责人</p>
+                          </div>
+                          <div class="pl-4 border-l-2 border-border relative before:absolute before:w-1.5 before:h-1.5 before:bg-accent before:rounded-full before:-left-[4px] before:top-2.5">
+                            <div class="flex flex-wrap justify-between items-baseline gap-2 mb-1">
+                              <span class="font-medium">国家奖学金</span>
+                              <span class="text-xs opacity-50 font-mono">2024.12</span>
+                            </div>
+                            <p class="opacity-60 text-sm">获得10000￥！</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- 省级 -->
+                      <div>
+                        <h3 class="text-xs font-bold text-accent mb-4 tracking-widest opacity-70 uppercase">省级</h3>
+                        <div class="space-y-5">
+                          <div class="pl-4 border-l-2 border-border relative before:absolute before:w-1.5 before:h-1.5 before:bg-accent before:rounded-full before:-left-[4px] before:top-2.5">
+                            <div class="flex flex-wrap justify-between items-baseline gap-2 mb-1">
+                              <span class="font-medium">全国大学生数学建模竞赛</span>
+                              <span class="text-xs opacity-50 font-mono">2024.11</span>
+                            </div>
+                            <p class="opacity-60 text-sm">山东赛区一等奖</p>
+                          </div>
+                          <div class="pl-4 border-l-2 border-border relative before:absolute before:w-1.5 before:h-1.5 before:bg-accent before:rounded-full before:-left-[4px] before:top-2.5">
+                            <div class="flex flex-wrap justify-between items-baseline gap-2 mb-1">
+                              <span class="font-medium">第十四届全国海洋航行器设计与制作大赛</span>
+                              <span class="text-xs opacity-50 font-mono">2025.08</span>
+                            </div>
+                            <p class="opacity-60 text-sm">齐鲁赛区二等奖 · 硬件技术暨拓扑架构负责人</p>
+                          </div>
+                          <div class="pl-4 border-l-2 border-border relative before:absolute before:w-1.5 before:h-1.5 before:bg-accent before:rounded-full before:-left-[4px] before:top-2.5">
+                            <div class="flex flex-wrap justify-between items-baseline gap-2 mb-1">
+                              <span class="font-medium">第十九届全国大学生智能汽车竞赛</span>
+                              <span class="text-xs opacity-50 font-mono">2024</span>
+                            </div>
+                            <p class="opacity-60 text-sm">山东赛区摩托组三等奖</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- 校级荣誉 -->
+                      <div>
+                        <h3 class="text-xs font-bold text-accent mb-4 tracking-widest opacity-70 uppercase">校级荣誉 & 其他</h3>
+                        <div class="space-y-5">
+                          <div class="pl-4 border-l-2 border-border relative before:absolute before:w-1.5 before:h-1.5 before:bg-accent before:rounded-full before:-left-[4px] before:top-2.5">
+                            <div class="flex flex-wrap justify-between items-baseline gap-2 mb-1">
+                              <span class="font-medium">机甲大师 (RoboMaster) 校内赛</span>
+                              <span class="text-xs opacity-50 font-mono">2023-2024</span>
+                            </div>
+                            <p class="opacity-60 text-sm">2024年特等奖 · 2023年一等奖</p>
+                          </div>
+                          <div class="pl-4 border-l-2 border-border relative before:absolute before:w-1.5 before:h-1.5 before:bg-accent before:rounded-full before:-left-[4px] before:top-2.5">
+                            <div class="flex flex-wrap justify-between items-baseline gap-2 mb-1">
+                              <span class="font-medium">综合学业类奖项</span>
+                              <span class="text-xs opacity-50 font-mono">2024</span>
+                            </div>
+                            <p class="opacity-60 text-sm">一等奖学金、二等人民奖学金、“实学实干”优秀学生</p>
+                          </div>
+                          <div class="pl-4 border-l-2 border-border relative before:absolute before:w-1.5 before:h-1.5 before:bg-accent before:rounded-full before:-left-[4px] before:top-2.5">
+                            <div class="flex flex-wrap justify-between items-baseline gap-2 mb-1">
+                              <span class="font-medium">科技竞赛类校级奖项</span>
+                              <span class="text-xs opacity-50 font-mono">2024-2025</span>
+                            </div>
+                            <p class="opacity-60 text-sm">“仲荣杯”AI挑战赛铜牌、智能车威海邀请赛/校内赛三等奖</p>
+                          </div>
+                          <div class="pl-4 border-l-2 border-border relative before:absolute before:w-1.5 before:h-1.5 before:bg-accent before:rounded-full before:-left-[4px] before:top-2.5">
+                            <div class="flex flex-wrap justify-between items-baseline gap-2 mb-1">
+                              <span class="font-medium">社会工作</span>
+                              <span class="text-xs opacity-50 font-mono">2024.09</span>
+                            </div>
+                            <p class="opacity-60 text-sm">聘任为哈工大(威海)“一站式”学生社区朋辈导师</p>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 模块 5：联系方式 -->
+              <div class="magic-item delay-6">
+                <button class="accordion-trigger w-full py-3 flex items-center justify-between text-left group/sub focus:outline-none" data-target="contact-content">
+                  <h2 class="text-lg font-semibold flex items-center gap-4 transition-transform duration-300 group-hover/sub:translate-x-2 group-hover/sub:text-accent">
+                    <span class="text-accent text-xl opacity-80 group-hover/sub:scale-110 transition-transform">✉️</span> 联系方式
+                  </h2>
+                  <svg class="arrow-icon w-5 h-5 opacity-30 group-hover/sub:opacity-100" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+                <div id="contact-content" class="grid-accordion">
+                  <div class="grid-accordion-inner">
+                    <div class="pl-12 py-3">
+                      <div class="flex flex-col gap-3">
+                        <a href="mailto:zhangqian.work@outlook.com" class="flex items-center gap-4 w-fit group/link">
+                          <div class="text-skin-base opacity-40 group-hover/link:text-accent group-hover/link:opacity-100 transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+                          </div>
+                          <span class="font-mono text-sm opacity-70 group-hover/link:text-accent group-hover/link:opacity-100 transition-colors">zhangqian.work@outlook.com</span>
+                        </a>
+                        <a href="https://github.com/Sakabamrisa" target="_blank" class="flex items-center gap-4 w-fit group/link">
+                          <div class="text-skin-base opacity-40 group-hover/link:text-accent group-hover/link:opacity-100 transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
+                          </div>
+                          <span class="font-mono text-sm opacity-70 group-hover/link:text-accent group-hover/link:opacity-100 transition-colors">github.com/Sakabamrisa</span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
         </div>
       </div>
-    </section>
+    </div>
 
-    <section class="mb-12">
-      <h2 class="text-xl font-semibold mb-6 flex items-center gap-2">
-        <span class="w-1 h-6 bg-accent rounded-full"></span>
-        发表经历
-      </h2>
-      <div class="pl-4 border-l-2 border-muted space-y-6">
-        <div>
-          <div class="flex flex-wrap items-baseline gap-2 mb-2">
-            <span class="font-medium">ScEdit: Script-based Assessment of Knowledge Editing</span>
-          </div>
-          <ul class="space-y-1 text-sm opacity-70">
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 w-1 h-1 bg-accent rounded-full flex-shrink-0"></span>
-              <span>Accepted by ACL 2025 Findings</span>
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 w-1 h-1 bg-accent rounded-full flex-shrink-0"></span>
-              <span>Authors: Xinye Li, Zunwen Zheng, Qian Zhang</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <section class="mb-12">
-      <h2 class="text-xl font-semibold mb-6 flex items-center gap-2">
-        <span class="w-1 h-6 bg-accent rounded-full"></span>
-        工作经历
-      </h2>
-      <div class="pl-4 border-l-2 border-muted space-y-4">
-        <div>
-          <div class="flex flex-wrap items-baseline gap-2 mb-1">
-            <span class="font-medium">上海交通大学 MVIG 实验室</span>
-            <span class="text-sm opacity-60">2024 - 至今</span>
-          </div>
-          <p class="opacity-70">科研实习生</p>
-        </div>
-        <div>
-          <div class="flex flex-wrap items-baseline gap-2 mb-1">
-            <span class="font-medium">哈工大 ICES 研究中心</span>
-            <span class="text-sm opacity-60">2024 - 至今</span>
-          </div>
-          <p class="opacity-70">科研实习生</p>
-        </div>
-        <div>
-          <div class="flex flex-wrap items-baseline gap-2 mb-1">
-            <span class="font-medium">哈工大威海联合创新平台</span>
-            <span class="text-sm opacity-60">2023 - 2024</span>
-          </div>
-          <p class="opacity-70">硬件技术负责人</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="mb-12">
-      <h2 class="text-xl font-semibold mb-6 flex items-center gap-2">
-        <span class="w-1 h-6 bg-accent rounded-full"></span>
-        获奖经历
-      </h2>
-      <div class="pl-4 border-l-2 border-muted space-y-4">
-        <div>
-          <div class="flex flex-wrap items-baseline gap-2 mb-1">
-            <span class="font-medium">挑战杯专项赛"揭榜挂帅"擂台赛</span>
-            <span class="text-sm opacity-60">2025年10月</span>
-          </div>
-          <p class="opacity-70">国家级二等奖 · 队长 · 人工智能领域主擂台赛</p>
-        </div>
-        <div>
-          <div class="flex flex-wrap items-baseline gap-2 mb-1">
-            <span class="font-medium">第十四届全国海洋航行器设计与制作大赛</span>
-            <span class="text-sm opacity-60">2025年8月</span>
-          </div>
-          <p class="opacity-70">国家级二等奖 · 硬件技术负责人暨拓补架构设计人</p>
-        </div>
-        <div>
-          <div class="flex flex-wrap items-baseline gap-2 mb-1">
-            <span class="font-medium">全国大学生数学建模竞赛</span>
-            <span class="text-sm opacity-60">2024年11月</span>
-          </div>
-          <p class="opacity-70">省级一等奖 · 主要负责人</p>
-        </div>
-        <div>
-          <div class="flex flex-wrap items-baseline gap-2 mb-1">
-            <span class="font-medium">国家奖学金</span>
-            <span class="text-sm opacity-60">2024年12月</span>
-          </div>
-          <p class="opacity-70">个人荣誉</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="mb-12">
-      <h2 class="text-xl font-semibold mb-6 flex items-center gap-2">
-        <span class="w-1 h-6 bg-accent rounded-full"></span>
-        联系方式
-      </h2>
-      <div class="pl-4 border-l-2 border-muted space-y-2">
-        <div class="flex items-center gap-3">
-          <span class="opacity-60">Email</span>
-          <a href="mailto:zhangqian.work@outlook.com" class="text-accent hover:underline">
-            zhangqian.work@outlook.com
-          </a>
-        </div>
-        <div class="flex items-center gap-3">
-          <span class="opacity-60">GitHub</span>
-          <a href="https://github.com/Sakabamrisa" target="_blank" class="text-accent hover:underline">
-            github.com/Sakabamrisa
-          </a>
-        </div>
-      </div>
-    </section>
-
+    <!-- ================= 顶级区块 2：最新动态 ================= -->
     {
       recentPosts.length > 0 && (
-        <section class="mt-16 pt-8 border-t border-border">
-          <h2 class="text-xl font-semibold mb-6 flex items-center gap-2">
-            <span class="w-1 h-6 bg-accent rounded-full"></span>
-            最新动态
-          </h2>
-          <ul class="space-y-4">
-            {recentPosts.map(data => <Card variant="h3" {...data} />)}
-          </ul>
-          <div class="mt-6">
-            <LinkButton href="/posts/" class="text-sm opacity-70 hover:opacity-100">
-              查看全部文章
-              <IconArrowRight class="inline-block rtl:-rotate-180" />
-            </LinkButton>
+        <div class="max-w-3xl mx-auto relative group">
+          
+          <button 
+            class="accordion-trigger w-full py-4 flex items-center justify-between text-left focus:outline-none group group-hover-trigger"
+            data-target="recent-posts-content"
+          >
+            <div class="flex items-center gap-5">
+              <div class="glow-bar w-1 h-8 bg-accent rounded-full"></div>
+              <h2 class="text-3xl font-bold tracking-wide transition-transform duration-300 group-hover:translate-x-2">最新动态</h2>
+            </div>
+            <svg class="arrow-icon w-8 h-8 text-skin-base opacity-40 group-hover:text-accent group-hover:opacity-100" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+
+          <div id="recent-posts-content" class="grid-accordion">
+            <div class="grid-accordion-inner">
+              
+              <div class="pl-2 pt-2 pb-6 flex items-center">
+                <div class="magic-circle relative flex items-center justify-center">
+                  <div class="w-3 h-3 rounded-full border-2 border-accent bg-skin-base z-10"></div>
+                  <div class="absolute w-6 h-6 bg-accent/20 rounded-full animate-ping" style="animation-duration: 2s;"></div>
+                </div>
+                <div class="magic-line flex-1 h-[1px] ml-4 bg-gradient-to-r from-accent/50 to-transparent"></div>
+              </div>
+
+              <div class="pl-8 pb-8 space-y-4">
+                <div class="opacity-80">
+                  {recentPosts.map((data, index) => (
+                    <div class={`magic-item delay-${index + 1}`}>
+                      <Card variant="h3" {...data} />
+                    </div>
+                  ))}
+                </div>
+                
+                <div class="pt-6 flex justify-start magic-item delay-4">
+                  <LinkButton href="/posts/" class="group/btn flex items-center gap-2 text-sm font-medium opacity-60 hover:opacity-100 hover:text-accent transition-all duration-300">
+                    <span class="border-b border-transparent group-hover/btn:border-accent pb-0.5">探索全部文章</span>
+                    <IconArrowRight class="inline-block rtl:-rotate-180 transition-transform group-hover/btn:translate-x-1" />
+                  </LinkButton>
+                </div>
+              </div>
+
+            </div>
           </div>
-        </section>
+        </div>
       )
     }
   </main>
@@ -178,6 +418,44 @@ const recentPosts = sortedPosts.filter(({ data }) => !data.featured).slice(0, 3)
 </Layout>
 
 <script>
+  function initAccordions() {
+    const triggers = document.querySelectorAll('.accordion-trigger');
+    
+    triggers.forEach(trigger => {
+      trigger.removeEventListener('click', toggleAccordion);
+      trigger.addEventListener('click', toggleAccordion);
+    });
+
+    function toggleAccordion(this: HTMLElement) {
+      const targetId = this.getAttribute('data-target');
+      if (!targetId) return;
+      
+      const content = document.getElementById(targetId);
+      const icon = this.querySelector('.arrow-icon');
+      const text = this.querySelector('h1') || this.querySelector('h2'); 
+      
+      if (content) {
+        const isOpen = content.classList.contains('is-open');
+        content.classList.toggle('is-open');
+        
+        if (icon) {
+          if (!isOpen) {
+            icon.classList.add('-rotate-180', 'text-accent');
+            icon.classList.remove('opacity-30', 'opacity-40');
+            if(text && text.tagName === 'H2') text.classList.add('text-accent');
+          } else {
+            icon.classList.remove('-rotate-180', 'text-accent');
+            icon.classList.add('opacity-40'); 
+            if(text && text.tagName === 'H2') text.classList.remove('text-accent');
+          }
+        }
+      }
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', initAccordions);
+  document.addEventListener('astro:page-load', initAccordions);
+
   document.addEventListener("astro:page-load", () => {
     const indexLayout = (document.querySelector("#main-content") as HTMLElement)?.dataset?.layout;
     if (indexLayout) {

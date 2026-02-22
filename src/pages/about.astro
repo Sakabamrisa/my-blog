@@ -2,155 +2,170 @@
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
+
+// ==========================================
+// 💡 数据与视图分离：在这里完善你的个人成长经历
+// ==========================================
+const timelineData = [
+  {
+    period: "2023 - 至今",
+    stage: "本科",
+    school: "哈尔滨工业大学（威海）",
+    location: "山东省威海市",
+    description: "在这里，我正式开启了计算机科学的探索之旅。结识了志同道合的伙伴，在各个实验室与项目中不断拓宽技术的边界，从理论走向实干，致力于做点真正有意思的事情。",
+    icon: "🎓"
+  },
+  {
+    period: "2020 - 2023",
+    stage: "高中",
+    school: "江苏省淮阴中学",
+    location: "江苏省淮安市清江浦区 · 解放东路99号",
+    description: "这是我充满拼搏与汗水的三年。在这里，我打下了坚实的理科基础，培养了严谨的逻辑思维。（你可以继续在这里补充你的高中故事...）",
+    icon: "🏫"
+  },
+  {
+    period: "2017 - 2020",
+    stage: "初中",
+    school: "淮安外国语学校",
+    location: "江苏省淮安市淮安区",
+    description: "初中阶段是我独立思考能力萌芽的时期。丰富的校园活动和严谨的学风，让我对理工科产生了初步的兴趣。（你可以继续在这里补充你的初中故事...）",
+    icon: "📖"
+  },
+  {
+    period: "2011 - 2017",
+    stage: "小学",
+    school: "盱眙县第一小学",
+    location: "江苏省淮安市盱眙县",
+    description: "无忧无虑的童年时光。在这里我第一次接触到奇妙的大千世界，保留着对万事万物最纯粹的好奇心。（你可以继续在这里补充你的小学故事...）",
+    icon: "🎒"
+  }
+];
 ---
 
-<Layout title="关于我">
+<Layout title="关于我 | 张骞">
   <Header />
-  <main class="app-layout py-12">
+  
+  <style>
+    /* ========== 页面级动画 ========== */
+    .fade-in-up {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+    @keyframes fadeInUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ========== 时间线动画系统 ========== */
+    /* 1. 垂直主干线向下延展 */
+    .draw-line {
+      transform-origin: top;
+      transform: scaleY(0);
+      animation: drawLine 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+      animation-delay: 0.2s; /* 等待标题出现后开始画线 */
+    }
+    @keyframes drawLine {
+      to { transform: scaleY(1); }
+    }
+
+    /* 2. 节点依次从左侧滑入 */
+    .timeline-item {
+      opacity: 0;
+      transform: translateX(-20px);
+      animation: slideInRight 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+    @keyframes slideInRight {
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ========== 悬浮交互 ========== */
+    .hover-glow:hover .timeline-dot {
+      box-shadow: 0 0 15px rgba(var(--color-accent-rgb), 0.8);
+      background-color: rgba(var(--color-accent-rgb), 1);
+      transform: scale(1.2);
+    }
+  </style>
+
+  <main id="main-content" class="app-layout py-12 min-h-[70vh]">
     
-    <section class="mb-16">
-      <h1 class="text-4xl font-bold mb-2">关于我</h1>
-      <p class="text-lg opacity-70 mb-6">欢迎你来了解我！</p>
-      <p class="text-base leading-relaxed max-w-2xl">
-        我叫<strong class="font-medium">张骞</strong>，一个热衷于做点有意思的事情的普通大学生，如果你也想做点有趣的事情，不妨和我聊聊？
-      </p>
-    </section>
-
-    <section class="mb-12">
-      <h2 class="text-xl font-semibold mb-6 flex items-center gap-2">
-        <span class="w-1 h-6 bg-accent rounded-full"></span>
-        教育经历
-      </h2>
-      <div class="pl-4 border-l-2 border-muted">
-        <div class="mb-4">
-          <div class="flex flex-wrap items-baseline gap-2 mb-1">
-            <span class="font-medium">哈尔滨工业大学（威海）</span>
-            <span class="text-sm opacity-60">2023 - 2027</span>
-          </div>
-          <p class="opacity-70">计算机科学与技术</p>
-        </div>
+    <!-- 顶部简介区域 -->
+    <section class="max-w-3xl mx-auto mb-16 fade-in-up" style="animation-delay: 0s;">
+      <div class="flex items-center gap-4 mb-4">
+        <div class="w-2 h-10 bg-accent rounded-full"></div>
+        <h1 class="text-4xl font-bold tracking-wide">关于我</h1>
+      </div>
+      <div class="pl-6 border-l-2 border-accent/20 ml-1">
+        <p class="text-lg text-accent opacity-90 mb-4 font-medium tracking-wide">欢迎你来了解我！</p>
+        <p class="text-base leading-relaxed opacity-70 max-w-2xl">
+          我叫<strong class="font-medium text-skin-base opacity-100">张骞</strong>，一个热衷于做点有意思的事情的普通大学生。如果你也对技术、科研或者任何有趣的事情感兴趣，不妨和我聊聊？
+        </p>
       </div>
     </section>
 
-    <section class="mb-12">
-      <h2 class="text-xl font-semibold mb-6 flex items-center gap-2">
-        <span class="w-1 h-6 bg-accent rounded-full"></span>
-        发表经历
+    <!-- 个人成长轨迹 (Timeline) -->
+    <section class="max-w-3xl mx-auto mb-12">
+      <h2 class="text-2xl font-bold mb-8 flex items-center gap-3 fade-in-up" style="animation-delay: 0.2s;">
+        <span class="text-accent text-2xl">🌌</span> 成长轨迹
       </h2>
-      <div class="pl-4 border-l-2 border-muted space-y-6">
-        <div>
-          <h3 class="font-medium mb-2">学术论文</h3>
-          <div class="mb-4">
-            <div class="flex flex-wrap items-baseline gap-2 mb-2">
-              <span class="font-medium">ScEdit: Script-based Assessment of Knowledge Editing</span>
+
+      <!-- 时间线容器 -->
+      <div class="relative pl-4 md:pl-6">
+        
+        <!-- 核心视觉：发光的垂直时间线 -->
+        <div class="absolute left-[23px] md:left-[31px] top-4 bottom-0 w-[2px] bg-gradient-to-b from-accent via-accent/30 to-transparent draw-line z-0"></div>
+
+        <!-- 遍历渲染时间线数据 -->
+        <div class="space-y-12">
+          {timelineData.map((item, index) => (
+            <div class="relative pl-10 md:pl-12 group hover-glow timeline-item" style={`animation-delay: ${0.4 + index * 0.2}s`}>
+              
+              <!-- 科技感时间轴节点 -->
+              <div class="absolute left-1 md:left-[7px] top-1.5 w-3.5 h-3.5 rounded-full border-2 border-accent bg-skin-base z-10 timeline-dot transition-all duration-300">
+                <!-- 持续心跳波纹 -->
+                <div class="absolute inset-0 bg-accent/30 rounded-full animate-ping" style="animation-duration: 2.5s;"></div>
+              </div>
+              
+              <!-- 交互式内容块 -->
+              <div class="transition-transform duration-300 group-hover:translate-x-2">
+                <!-- 头部信息 -->
+                <div class="flex flex-wrap items-baseline gap-3 mb-2">
+                  <span class="text-accent text-xl opacity-80 group-hover:scale-110 transition-transform">{item.icon}</span>
+                  <h3 class="text-2xl font-bold tracking-wide group-hover:text-accent transition-colors">{item.school}</h3>
+                  <span class="text-sm font-mono opacity-50 px-2 py-0.5 rounded border border-border/50 bg-skin-card">{item.period}</span>
+                </div>
+                
+                <!-- 副标题与描述 -->
+                <div class="pl-3 border-l-2 border-border/50 ml-2 mt-3 group-hover:border-accent/40 transition-colors">
+                  <p class="text-accent/80 text-sm font-medium mb-2 tracking-wide">
+                    {item.stage} <span class="opacity-50 mx-1">/</span> {item.location}
+                  </p>
+                  <p class="opacity-70 leading-relaxed text-sm md:text-base group-hover:opacity-90 transition-opacity">
+                    {item.description}
+                  </p>
+                </div>
+              </div>
+
             </div>
-            <ul class="space-y-1 text-sm opacity-70">
-              <li class="flex items-start gap-2">
-                <span class="mt-1.5 w-1 h-1 bg-accent rounded-full flex-shrink-0"></span>
-                <span>Accepted by ACL 2025 Findings</span>
-              </li>
-              <li class="flex items-start gap-2">
-                <span class="mt-1.5 w-1 h-1 bg-accent rounded-full flex-shrink-0"></span>
-                <span>Authors: Xinye Li, Zunwen Zheng, Qian Zhang</span>
-              </li>
-            </ul>
-          </div>
+          ))}
         </div>
-        <div>
-          <h3 class="font-medium mb-2">技术文章</h3>
-          <p class="opacity-60 text-sm">暂无公开文章</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="mb-12">
-      <h2 class="text-xl font-semibold mb-6 flex items-center gap-2">
-        <span class="w-1 h-6 bg-accent rounded-full"></span>
-        工作经历
-      </h2>
-      <div class="pl-4 border-l-2 border-muted space-y-4">
-        <div>
-          <div class="flex flex-wrap items-baseline gap-2 mb-1">
-            <span class="font-medium">上海交通大学 MVIG 实验室</span>
-            <span class="text-sm opacity-60">2024 - 至今</span>
-          </div>
-          <p class="opacity-70">科研实习生</p>
-        </div>
-        <div>
-          <div class="flex flex-wrap items-baseline gap-2 mb-1">
-            <span class="font-medium">哈工大 ICES 研究中心</span>
-            <span class="text-sm opacity-60">2024 - 至今</span>
-          </div>
-          <p class="opacity-70">科研实习生</p>
-        </div>
-        <div>
-          <div class="flex flex-wrap items-baseline gap-2 mb-1">
-            <span class="font-medium">哈工大威海联合创新平台</span>
-            <span class="text-sm opacity-60">2023 - 2024</span>
-          </div>
-          <p class="opacity-70">硬件技术负责人</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="mb-12">
-      <h2 class="text-xl font-semibold mb-6 flex items-center gap-2">
-        <span class="w-1 h-6 bg-accent rounded-full"></span>
-        获奖经历
-      </h2>
-      <div class="pl-4 border-l-2 border-muted space-y-4">
-        <div>
-          <div class="flex flex-wrap items-baseline gap-2 mb-1">
-            <span class="font-medium">挑战杯专项赛"揭榜挂帅"擂台赛</span>
-            <span class="text-sm opacity-60">2025年10月</span>
-          </div>
-          <p class="opacity-70">国家级二等奖 · 队长 · 人工智能领域主擂台赛</p>
-        </div>
-        <div>
-          <div class="flex flex-wrap items-baseline gap-2 mb-1">
-            <span class="font-medium">第十四届全国海洋航行器设计与制作大赛</span>
-            <span class="text-sm opacity-60">2025年8月</span>
-          </div>
-          <p class="opacity-70">国家级二等奖 · 硬件技术负责人暨拓补架构设计人</p>
-        </div>
-        <div>
-          <div class="flex flex-wrap items-baseline gap-2 mb-1">
-            <span class="font-medium">全国大学生数学建模竞赛</span>
-            <span class="text-sm opacity-60">2024年11月</span>
-          </div>
-          <p class="opacity-70">省级一等奖 · 主要负责人</p>
-        </div>
-        <div>
-          <div class="flex flex-wrap items-baseline gap-2 mb-1">
-            <span class="font-medium">国家奖学金</span>
-            <span class="text-sm opacity-60">2024年12月</span>
-          </div>
-          <p class="opacity-70">个人荣誉</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="mb-12">
-      <h2 class="text-xl font-semibold mb-6 flex items-center gap-2">
-        <span class="w-1 h-6 bg-accent rounded-full"></span>
-        联系方式
-      </h2>
-      <div class="pl-4 border-l-2 border-muted space-y-2">
-        <div class="flex items-center gap-3">
-          <span class="opacity-60">Email</span>
-          <a href="mailto:zhangqian.work@outlook.com" class="text-accent hover:underline">
-            zhangqian.work@outlook.com
-          </a>
-        </div>
-        <div class="flex items-center gap-3">
-          <span class="opacity-60">GitHub</span>
-          <a href="https://github.com/Sakabamrisa" target="_blank" class="text-accent hover:underline">
-            github.com/Sakabamrisa
-          </a>
-        </div>
+        
       </div>
     </section>
 
   </main>
   <Footer />
 </Layout>
+
+<script>
+  // Astro 页面过渡动画支持
+  document.addEventListener("astro:page-load", () => {
+    // 强制触发动画（适配 Astro View Transitions）
+    const items = document.querySelectorAll('.timeline-item, .fade-in-up, .draw-line');
+    items.forEach(item => {
+      const el = item as HTMLElement;
+      el.style.animation = 'none';
+      el.offsetHeight; /* 触发重绘 */
+      el.style.animation = '';
+    });
+  });
+</script>
