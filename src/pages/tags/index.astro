@@ -1,7 +1,6 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
-import Tag from "@/components/Tag.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import getUniqueTags from "@/utils/getUniqueTags";
@@ -91,7 +90,20 @@ let tags = getUniqueTags(posts);
           {tags.map(({ tag, tagName }, index) => (
             <!-- 动态延迟：index * 0.05s 实现极速级联展开 -->
             <li class="tag-item" style={`animation-delay: ${0.4 + index * 0.05}s`}>
-              <Tag {tag} {tagName} />
+              <a
+                href={`/tags/${tag}/`}
+                transition:name={tag}
+                class="group relative flex items-center gap-2 px-4 py-2 bg-background border border-border rounded-full shadow-sm hover:shadow-md hover:border-accent hover:-translate-y-1 transition-all duration-300"
+              >
+                <!-- 背景高亮微动效 -->
+                <div class="absolute inset-0 rounded-full bg-accent opacity-0 group-hover:opacity-10 transition-opacity duration-300 z-0"></div>
+                
+                <!-- 井号图标动效 -->
+                <span class="relative text-accent opacity-70 group-hover:scale-110 group-hover:opacity-100 transition-all duration-300 z-10">#</span>
+                
+                <!-- 标签文字 -->
+                <span class="relative text-sm font-medium whitespace-nowrap z-10">{tagName}</span>
+              </a>
             </li>
           ))}
         </ul>
