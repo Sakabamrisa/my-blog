@@ -1,0 +1,191 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+---
+
+<Layout title="解锁新地图 | 探索印记">
+  <Header />
+
+  <main
+    id="main-content"
+    class="relative w-full overflow-hidden"
+    style="height: calc(100vh - 150px);"
+  >
+    <div class="absolute inset-0 z-0 bg-background"></div>
+    <div id="map-container" class="absolute inset-0 z-10 h-full w-full"></div>
+  </main>
+</Layout>
+
+<script>
+  import * as echarts from "echarts";
+  import { visitedCities } from "../data/visitedData";
+  import chinaJson from "../data/china.json";
+
+  function getThemeColors() {
+    const isDark =
+      document.documentElement.getAttribute("data-theme") === "dark";
+    return {
+      mapBg: isDark ? "#0d0d0d" : "#fdfdfd",
+      mapTop: isDark ? "#1a1a1a" : "#f0f0f0", // 地图填充色
+      mapBorder: isDark ? "#3d3d3d" : "#ece9e9",
+      accent: isDark ? "#d4af37" : "#006cac",
+      text: isDark ? "#f5f5f0" : "#282728",
+      shadow: isDark ? "rgba(0,0,0,0.8)" : "rgba(100,100,100,0.3)",
+    };
+  }
+
+  function initMap() {
+    const chartDom = document.getElementById("map-container");
+    if (!chartDom) return;
+
+    let myChart = echarts.getInstanceByDom(chartDom);
+    if (!myChart) {
+      myChart = echarts.init(chartDom);
+    }
+
+    try {
+      echarts.registerMap("china", chinaJson as any);
+
+      const visitedData = visitedCities || [];
+      const colors = getThemeColors();
+
+      const option = {
+        backgroundColor: "transparent",
+        tooltip: {
+          show: true,
+          formatter: function (params: any) {
+            const c = getThemeColors();
+            if (params.data && params.data.cityInfo) {
+              return `<div style="padding:4px;color:${c.text};font-weight:bold;">📍 ${params.data.name}<br/><span style="font-size:12px;opacity:0.8;font-weight:normal;color:${c.text}">点击查看文章</span></div>`;
+            }
+            return `<span style="color:${c.text}">${params.name}</span>`;
+          },
+          backgroundColor: colors.mapBg,
+          borderColor: colors.accent,
+          borderWidth: 1,
+          textStyle: {
+            color: colors.text,
+          },
+        },
+        geo: {
+          map: "china",
+          roam: true,
+          label: {
+            show: false,
+            color: colors.text,
+          },
+          itemStyle: {
+            color: colors.mapTop,
+            borderColor: colors.mapBorder,
+            borderWidth: 1.5,
+            // 巧用阴影做出立体厚度感
+            shadowColor: colors.shadow,
+            shadowOffsetX: 2,
+            shadowOffsetY: 8,
+            shadowBlur: 4,
+          },
+          emphasis: {
+            label: { show: true, color: colors.accent, fontWeight: "bold" },
+            itemStyle: {
+              color: colors.mapBg,
+              borderColor: colors.accent,
+              borderWidth: 2,
+              shadowColor: colors.shadow,
+              shadowOffsetX: 2,
+              shadowOffsetY: 8,
+              shadowBlur: 4,
+            },
+          },
+        },
+        series: [
+          {
+            type: "scatter",
+            coordinateSystem: "geo",
+            symbol: "path://M10,2 L10,20 M10,2 L22,8 L10,14", // 旗帜形状
+            symbolSize: [26, 26],
+            symbolOffset: [0, "-50%"], // 底部对准经纬度坐标
+            itemStyle: {
+              color: colors.accent,
+              opacity: 1,
+              borderWidth: 1.5,
+              borderColor: colors.mapBg,
+              shadowBlur: 5,
+              shadowColor: colors.accent,
+            },
+            data: visitedData.map((c: any) => ({
+              name: c.name,
+              value: c.coords,
+              cityInfo: c,
+            })),
+          },
+        ],
+      };
+      myChart.setOption(option);
+
+      // 事件绑定前先解绑，防止多次注册
+      myChart.off("click");
+      myChart.on("click", (params: any) => {
+        if (
+          params.componentType === "series" &&
+          params.data &&
+          params.data.cityInfo &&
+          params.data.cityInfo.postSlug
+        ) {
+          const slug = params.data.cityInfo.postSlug;
+          window.location.href = `/posts/${slug}`;
+        }
+      });
+
+      // 监听站点亮暗模式切换实时改变地图样式
+      const observer = new MutationObserver(() => {
+        const newColors = getThemeColors();
+        myChart.setOption({
+          tooltip: {
+            backgroundColor: newColors.mapBg,
+            borderColor: newColors.accent,
+            textStyle: { color: newColors.text },
+          },
+          geo: {
+            label: { color: newColors.text },
+            itemStyle: {
+              color: newColors.mapTop,
+              borderColor: newColors.mapBorder,
+              shadowColor: newColors.shadow,
+            },
+            emphasis: {
+              label: { color: newColors.accent },
+              itemStyle: {
+                color: newColors.mapBg,
+                borderColor: newColors.accent,
+                shadowColor: newColors.shadow,
+              },
+            },
+          },
+          series: [
+            {
+              itemStyle: {
+                color: newColors.accent,
+                borderColor: newColors.mapBg,
+                shadowColor: newColors.accent,
+              },
+            },
+          ],
+        });
+      });
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["data-theme"],
+      });
+
+      window.addEventListener("resize", () => myChart.resize());
+    } catch (e) {
+      console.error("2D地图加载失败", e);
+    }
+  }
+
+  // 稍微延迟初始化确保DOM高度已被CSS正确计算
+  setTimeout(initMap, 50);
+
+  document.addEventListener("astro:page-load", initMap);
+  document.addEventListener("astro:after-swap", initMap);
+</script>

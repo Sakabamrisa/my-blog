@@ -81,19 +81,43 @@ const isActive = (path: string) => {
             标签
           </a>
         </li>
-        <li class="col-span-2">
-          <a href="/about" class:list={{ "active-nav": isActive("/about") }}>
-            关于
-          </a>
-        </li>
-        <li class="col-span-2">
-          <a href="/baba" class:list={{ "active-nav": isActive("/baba") }}>
-            巴巴博弈
-          </a>
+        <li class="col-span-2 sm:col-span-1 relative group">
+          <button
+            class="focus-outline flex w-full items-center justify-center p-3 sm:p-1 font-medium hover:text-accent"
+            aria-expanded="false"
+            aria-haspopup="true"
+            id="more-dropdown-btn"
+          >
+            探索更多
+            <svg xmlns="http://www.w3.org/2000/svg" class="ml-1 h-4 w-4 transition-transform group-hover:rotate-180" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+            </svg>
+          </button>
+          
+          <!-- Dropdown Menu Wrapper (with padding to bridge the gap) -->
+          <div class="absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 invisible transition-all duration-300 group-hover:opacity-100 group-hover:visible group-hover:translate-y-1 sm:left-auto sm:right-0 sm:translate-x-0 z-50">
+            <ul class="w-36 rounded-xl border border-border bg-background/95 backdrop-blur-sm p-2 shadow-lg">
+              <li>
+                <a href="/about" class:list={["block rounded-md px-4 py-2 text-center text-sm hover:bg-muted hover:text-accent", {"!text-accent font-bold": isActive("/about")}]}>
+                  关于
+                </a>
+              </li>
+              <li>
+                <a href="/baba" class:list={["block rounded-md px-4 py-2 text-center text-sm hover:bg-muted hover:text-accent", {"!text-accent font-bold": isActive("/baba")}]}>
+                  巴巴博弈
+                </a>
+              </li>
+              <li>
+                <a href="/map" class:list={["block rounded-md px-4 py-2 text-center text-sm hover:bg-muted hover:text-accent", {"!text-accent font-bold": isActive("/map")}]}>
+                  解锁新地图
+                </a>
+              </li>
+            </ul>
+          </div>
         </li>
         {
           SITE.showArchives && (
-            <li class="col-span-2">
+            <li class="col-span-2 sm:col-span-1">
               <LinkButton
                 href="/archives"
                 class:list={[
