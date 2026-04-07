@@ -102,6 +102,40 @@ const timelineData = [
       </div>
     </section>
 
+    <!-- 发表经历 -->
+    <section class="max-w-3xl mx-auto mb-16 fade-in-up" style="animation-delay: 0.15s;">
+      <h2 class="text-2xl font-bold mb-8 flex items-center gap-3">
+        <span class="text-accent text-2xl">📄</span> 发表经历
+      </h2>
+      <div class="space-y-8">
+
+        <!-- Publication 1 -->
+        <div class="pl-4 border-l-4 border-accent rounded-r-lg">
+          <p class="text-base font-bold leading-snug mb-1">
+            Editing the Moving World: Model Editing for Video LLMs
+          </p>
+          <p class="text-sm opacity-60 mb-2">张骞，李听烨，…，初旭桦<sup>†</sup>，阮典佑<sup>†</sup></p>
+          <p class="text-sm text-accent font-medium mb-2">已被 ACL 2026 Main Conference 接收。</p>
+          <p class="text-sm opacity-70 leading-relaxed">
+            提出首个面向视频大语言模型（Vid-LLMs）的模型编辑基准 <strong>VMEB</strong>，将模型编辑研究从单模态扩展至动态视频场景。基于 EasyEdit 框架，在 Qwen3-VL 等主流 MLLM 上系统实现并评估了 FT、IKE、MEND、SERAC、MEMIT、AlphaEdit 六种 Model Editing 方法。设计了涵盖 Reliability、Locality、Generality 和 Robustness 的四维评估体系，并提出视频特有的鲁棒性指标与视觉锚定分数（Visually Grounded Score）。通过消融实验揭示了 Locate-then-Edit 范式的模型方法在视频模态下的结构性失败及多数方法的"Visual Blindness"现象，为多模态模型编辑指明研究方向。
+          </p>
+        </div>
+
+        <!-- Publication 2 -->
+        <div class="pl-4 border-l-4 border-accent/50 rounded-r-lg">
+          <p class="text-base font-bold leading-snug mb-1">
+            ScEdit: Script-based Assessment of Knowledge Editing
+          </p>
+          <p class="text-sm opacity-60 mb-2">李听烨，郑尊文，张骞，…，初旭桦<sup>†</sup>，阮典佑<sup>†</sup></p>
+          <p class="text-sm text-accent font-medium mb-2">已被 ACL 2025 Findings 接收。</p>
+          <p class="text-sm opacity-70 leading-relaxed">
+            提出面向脚本生成场景的模型编辑评测基准 <strong>ScEdit</strong>，提出脚本化的 token-level 指标（S-ES/S-NS/S-BO）和四维 text-level 指标体系，基于 HuggingFace Transformers + PyTorch，复现 ROME/MEMIT 等主流模型编辑方法。构建 GPT-4 驱动的数据生成与 LLM-as-Judge 自动评估 pipeline。使用 Spearman 相关分析对 token-level 与 text-level 指标进行系统性分析。
+          </p>
+        </div>
+
+      </div>
+    </section>
+
     <!-- 个人成长轨迹 (Timeline) -->
     <section class="max-w-3xl mx-auto mb-12">
       <h2 class="text-2xl font-bold mb-8 flex items-center gap-3 fade-in-up" style="animation-delay: 0.2s;">
